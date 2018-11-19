@@ -1,3 +1,6 @@
 Pipfile*
 
 .vscode/*
+
+# ignore datasets
+*.csv
