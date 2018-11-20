@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 tensorflow = "*"
-pylint = "*"
 "pep8" = "*"
 "autopep8" = "*"
 pandas = "*"
