@@ -27,8 +27,8 @@ def input_fn_test(csv_file):
     return dataset
 
 
-def make_hparam_str(learning_rate, hidden_units):
-    return f'lr={learning_rate}, layers={hidden_units}'
+def make_hparam_str(learning_rate, hidden_units, dropout):
+    return f'lr={learning_rate}, layers={hidden_units}, dropout={dropout}'
 
 
 # tf.enable_eager_execution()
@@ -55,15 +55,17 @@ feature_columns = [sex, pclass, age, fare]
 
 
 for learning_rate in [1E-3, 1E-4, 1E-5]:
-    for hidden_units in [[], [5], [10], [20]]:
-        hparam_str = make_hparam_str(learning_rate, hidden_units)
-        model_dir = f'/tmp/titanic/19/{hparam_str}'
+    for hidden_units in [[], [5], [10], [5, 5], [10, 5]]:
+        for dropout in [None, 0.2]:
+            hparam_str = make_hparam_str(learning_rate, hidden_units, dropout)
+            model_dir = f'/tmp/titanic/20/{hparam_str}'
 
-        optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
+            optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
 
-        estimator = tf.estimator.DNNClassifier(hidden_units=hidden_units,
-                                               feature_columns=[sex],
-                                               model_dir=model_dir,
-                                               optimizer=optimizer)
-        estimator.train(lambda: input_fn_train('train.csv'))
-        accuracy = estimator.evaluate(lambda: input_fn_train('train.csv'))
+            estimator = tf.estimator.DNNClassifier(hidden_units=hidden_units,
+                                                   feature_columns=[sex],
+                                                   model_dir=model_dir,
+                                                   optimizer=optimizer,
+                                                   dropout=dropout)
+            estimator.train(lambda: input_fn_train('train.csv'))
+            accuracy = estimator.evaluate(lambda: input_fn_train('train.csv'))
