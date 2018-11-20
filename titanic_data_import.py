@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-NUM_EPOCHS = 100
+NUM_EPOCHS = 5000
 BATCH_SIZE = 100
 
 
