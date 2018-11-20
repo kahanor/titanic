@@ -2,3 +2,5 @@
 
 # ignore datasets
 *.csv
+data
+tmp
