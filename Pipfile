@@ -5,11 +5,12 @@ name = "pypi"
 
 [packages]
 tensorflow = "*"
-"pep8" = "*"
-"autopep8" = "*"
 pandas = "*"
 
 [dev-packages]
+rope = "*"
+"pep8" = "*"
+"autopep8" = "*"
 
 [requires]
 python_version = "3.6"
