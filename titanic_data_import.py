@@ -49,7 +49,10 @@ pclass = tf.feature_column.indicator_column(pclass_categorical)
 
 age = tf.feature_column.numeric_column('Age')
 
-feature_columns = [sex, pclass, age]
+fare = tf.feature_column.numeric_column('Fare')
+
+feature_columns = [sex, pclass, age, fare]
+
 
 estimator = tf.estimator.DNNClassifier(hidden_units=[10],
                                        feature_columns=[sex],
