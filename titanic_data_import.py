@@ -27,8 +27,8 @@ def input_fn_test(csv_file):
     return dataset
 
 
-def _encode(features, labels):
-    return features, labels
+def make_hparam_str(learning_rate, hidden_units):
+    return f'lr={learning_rate}, layers={hidden_units}'
 
 
 # tf.enable_eager_execution()
@@ -54,9 +54,16 @@ fare = tf.feature_column.numeric_column('Fare')
 feature_columns = [sex, pclass, age, fare]
 
 
-estimator = tf.estimator.DNNClassifier(hidden_units=[10],
-                                       feature_columns=[sex],
-                                       model_dir='/tmp/titanic/16')
+for learning_rate in [1E-3, 1E-4, 1E-5]:
+    for hidden_units in [[], [5], [10], [20]]:
+        hparam_str = make_hparam_str(learning_rate, hidden_units)
+        model_dir = f'/tmp/titanic/19/{hparam_str}'
 
-estimator.train(lambda: input_fn_train('train.csv'))
-accuracy = estimator.evaluate(lambda: input_fn_train('train.csv'))
+        optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
+
+        estimator = tf.estimator.DNNClassifier(hidden_units=hidden_units,
+                                               feature_columns=[sex],
+                                               model_dir=model_dir,
+                                               optimizer=optimizer)
+        estimator.train(lambda: input_fn_train('train.csv'))
+        accuracy = estimator.evaluate(lambda: input_fn_train('train.csv'))
