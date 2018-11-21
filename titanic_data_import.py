@@ -91,13 +91,14 @@ feature_columns = [sex, pclass, age, fare, sib_sb, par_ch]
 
 for learning_rate in [1E-3, 1E-4, 1E-5]:
     for hidden_units in [[], [5], [10], [5, 5], [10, 5]]:
-        for dropout in [None, 0.2]:
-            hparam_str = make_hparam_str(learning_rate, hidden_units, dropout)
-            model_dir = f'/tmp/titanic/26/{hparam_str}'
-            config = tf.estimator.RunConfig(model_dir=model_dir,
-                                            save_summary_steps=100)
+        dropout = None
 
-            optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
+        hparam_str = make_hparam_str(learning_rate, hidden_units, dropout)
+        model_dir = f'/tmp/titanic/01/{hparam_str}'
+        config = tf.estimator.RunConfig(model_dir=model_dir,
+                                        save_summary_steps=100)
+
+        optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
 
         estimator = tf.estimator.DNNClassifier(
             hidden_units=hidden_units,
@@ -107,8 +108,9 @@ for learning_rate in [1E-3, 1E-4, 1E-5]:
             dropout=dropout
         )
 
-            estimator.train(lambda: input_fn_train('train.csv'),
-                            steps=NUM_ITERATIONS)
+        estimator.train(lambda: input_fn_train('train.csv'),
+                        steps=NUM_ITERATIONS)
+        accuracy = estimator.evaluate(lambda: input_fn_eval('train.csv'))
         prediction = estimator.predict(lambda: input_fn_test('test.csv'))
 
         out_file = f'predict_{hparam_str}.csv'
