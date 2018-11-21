@@ -57,7 +57,9 @@ for learning_rate in [1E-3, 1E-4, 1E-5]:
     for hidden_units in [[], [5], [10], [5, 5], [10, 5]]:
         for dropout in [None, 0.2]:
             hparam_str = make_hparam_str(learning_rate, hidden_units, dropout)
-            model_dir = f'/tmp/titanic/24/{hparam_str}'
+            model_dir = f'/tmp/titanic/26/{hparam_str}'
+            config = tf.estimator.RunConfig(model_dir=model_dir,
+                                            save_summary_steps=100)
 
             optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
 
