@@ -95,11 +95,13 @@ for learning_rate in [1E-3, 1E-4, 1E-5]:
 
             optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
 
-            estimator = tf.estimator.DNNClassifier(hidden_units=hidden_units,
-                                                   feature_columns=[sex],
-                                                   model_dir=model_dir,
-                                                   optimizer=optimizer,
-                                                   dropout=dropout)
+        estimator = tf.estimator.DNNClassifier(
+            hidden_units=hidden_units,
+            feature_columns=feature_columns,
+            model_dir=model_dir,
+            optimizer=optimizer,
+            dropout=dropout
+        )
 
             estimator.train(lambda: input_fn_train('train.csv'),
                             steps=NUM_ITERATIONS)
