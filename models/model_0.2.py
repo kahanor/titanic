@@ -14,9 +14,18 @@ model_dir = Path(f'{TMP}/{i}')
 
 def input_fn():
     dataset = tf.data.experimental.make_csv_dataset(
-        f'{PROJECT_ROOT}/data/train.csv', BATCH_SIZE, label_name='Survived',
+        f'{PROJECT_ROOT}/data/c_train.csv', BATCH_SIZE, label_name='Survived',
         select_columns=['Pclass', 'Sex', 'Survived', 'Age', 'Embarked', 'Parch', 'SibSp'],
         num_epochs=NUM_EPOCHS
+    )
+    return dataset
+
+
+def validate_fn():
+    dataset = tf.data.experimental.make_csv_dataset(
+        f'{PROJECT_ROOT}/data/c_validate.csv', BATCH_SIZE, label_name='Survived',
+        select_columns=['Pclass', 'Sex', 'Survived', 'Age', 'Embarked', 'Parch', 'SibSp'],
+        num_epochs=1
     )
     return dataset
 
@@ -73,4 +82,4 @@ estimator = tf.estimator.DNNClassifier(
 )
 
 estimator.train(input_fn=input_fn)
-estimator.evaluate(input_fn=input_fn, steps=8)
+estimator.evaluate(input_fn=validate_fn, steps=1)
