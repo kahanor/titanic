@@ -3,8 +3,7 @@ from pathlib import Path
 
 NUM_EPOCHS = 1000
 BATCH_SIZE = 100
-PROJECT_ROOT = '/home/simon/Documents/Uni/Semester_03/KaggleLab/titanic'
-TMP = f'{PROJECT_ROOT}/tmp/model_0.2/'
+TMP = 'tmp/model_0.2/'
 
 i = 0
 while Path(f'{TMP}/{i}').exists():
@@ -14,7 +13,7 @@ model_dir = Path(f'{TMP}/{i}')
 
 def input_fn():
     dataset = tf.data.experimental.make_csv_dataset(
-        f'{PROJECT_ROOT}/data/train.csv', BATCH_SIZE, label_name='Survived',
+        'data/train.csv', BATCH_SIZE, label_name='Survived',
         select_columns=['Pclass', 'Sex', 'Survived',
                         'Age', 'Embarked', 'Parch', 'SibSp'],
         num_epochs=NUM_EPOCHS
@@ -24,7 +23,7 @@ def input_fn():
 
 def validate_fn():
     dataset = tf.data.experimental.make_csv_dataset(
-        f'{PROJECT_ROOT}/data/train.csv', BATCH_SIZE,
+        'data/train.csv', BATCH_SIZE,
         label_name='Survived',
         select_columns=['Pclass', 'Sex', 'Survived',
                         'Age', 'Embarked', 'Parch', 'SibSp'],
