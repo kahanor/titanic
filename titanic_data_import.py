@@ -53,7 +53,7 @@ def make_hparam_str(learning_rate, hidden_units, dropout):
     return f'lr={learning_rate}, layers={hidden_units}, dropout={dropout}'
 
 
-def write_predictions(predictions, in_file='test.csv', out_file='predict.csv'):
+def write_predictions(prediction, in_file='test.csv', out_file='predict.csv'):
     df_in = pd.read_csv(in_file)
     df_out = pd.DataFrame()
     df_out['PassengerId'] = df_in['PassengerId']
@@ -94,7 +94,7 @@ for learning_rate in [1E-3, 1E-4, 1E-5]:
         dropout = None
 
         hparam_str = make_hparam_str(learning_rate, hidden_units, dropout)
-        model_dir = f'/tmp/titanic/01/{hparam_str}'
+        model_dir = f'/tmp/titanic/02/{hparam_str}'
         config = tf.estimator.RunConfig(model_dir=model_dir,
                                         save_summary_steps=100)
 
