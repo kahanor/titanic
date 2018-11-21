@@ -1,5 +1,6 @@
 import tensorflow as tf
 import pandas as pd
+from output_titanic import write_predictions
 
 NUM_ITERATIONS = 10001
 BATCH_SIZE = 100
@@ -53,15 +54,6 @@ def make_hparam_str(learning_rate, hidden_units, dropout):
     return f'lr={learning_rate}, layers={hidden_units}, dropout={dropout}'
 
 
-def write_predictions(prediction, in_file='test.csv', out_file='predict.csv'):
-    df_in = pd.read_csv(in_file)
-    df_out = pd.DataFrame()
-    df_out['PassengerId'] = df_in['PassengerId']
-    survived = [pred['class_ids'][0] for pred in list(prediction)]
-    df_out['Survived'] = pd.Series(survived)
-    df_out.to_csv(out_file, index=False)
-
-
 # tf.enable_eager_execution()
 tf.logging.set_verbosity(tf.logging.INFO)
 
@@ -94,7 +86,7 @@ for learning_rate in [1E-3, 1E-4, 1E-5]:
         dropout = None
 
         hparam_str = make_hparam_str(learning_rate, hidden_units, dropout)
-        model_dir = f'/tmp/titanic/02/{hparam_str}'
+        model_dir = f'/tmp/titanic/01/{hparam_str}'
         config = tf.estimator.RunConfig(model_dir=model_dir,
                                         save_summary_steps=100)
 
