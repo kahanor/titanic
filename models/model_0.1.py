@@ -29,6 +29,7 @@ def get_next_batch(a_data_set):
     # TODO implement
     return 1
 
+
 data_set = get_data_set("../data/train.csv")
 print(data_set[0:10])
 print(data_set.dtype)
@@ -61,11 +62,11 @@ sess.run(init)
 
 # for loop
 for i in range(1000):
-    batch_X, batch_Y = (1, 2)# get_next_batch(10)
+    batch_X, batch_Y = (1, 2)  # get_next_batch(10)
     train_data = {X: batch_X, Y_: batch_Y}
     sess.run(train_step, feed_dict=train_data)
     if(i % 100 == 0):
-        test_X, test_Y = (1, 2)# get_test_data
+        test_X, test_Y = (1, 2)  # get_test_data
         test_data = {X: test_X, Y_: test_Y}
         a, c = sess.run([accuracy, cross_entropy], feed_dict=test_data)
         print(f'{i} train accuracy: {a} cross_entropy: {c}')

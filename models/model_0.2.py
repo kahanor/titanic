@@ -15,7 +15,8 @@ model_dir = Path(f'{TMP}/{i}')
 def input_fn():
     dataset = tf.data.experimental.make_csv_dataset(
         f'{PROJECT_ROOT}/data/c_train.csv', BATCH_SIZE, label_name='Survived',
-        select_columns=['Pclass', 'Sex', 'Survived', 'Age', 'Embarked', 'Parch', 'SibSp'],
+        select_columns=['Pclass', 'Sex', 'Survived',
+                        'Age', 'Embarked', 'Parch', 'SibSp'],
         num_epochs=NUM_EPOCHS
     )
     return dataset
@@ -23,11 +24,14 @@ def input_fn():
 
 def validate_fn():
     dataset = tf.data.experimental.make_csv_dataset(
-        f'{PROJECT_ROOT}/data/c_validate.csv', BATCH_SIZE, label_name='Survived',
-        select_columns=['Pclass', 'Sex', 'Survived', 'Age', 'Embarked', 'Parch', 'SibSp'],
+        f'{PROJECT_ROOT}/data/c_validate.csv', BATCH_SIZE,
+        label_name='Survived',
+        select_columns=['Pclass', 'Sex', 'Survived',
+                        'Age', 'Embarked', 'Parch', 'SibSp'],
         num_epochs=1
     )
     return dataset
+
 
 tf.logging.set_verbosity(tf.logging.INFO)
 
