@@ -1,18 +1,37 @@
 import tensorflow as tf
+import pandas as pd
 
 NUM_ITERATIONS = 15001
 BATCH_SIZE = 100
 
 
-def _encode_pclass(features, labels):
+def _encode_pclass(features, labels=None):
     features['Pclass'] = features['Pclass'] - 1
+    if labels is None:
+        return features
     return features, labels
 
 
 def input_fn_train(csv_file):
     dataset = tf.data.experimental.make_csv_dataset(
-        csv_file, BATCH_SIZE, label_name='Survived',
-        select_columns=['Sex', 'Pclass', 'Age', 'Survived']
+        csv_file,
+        BATCH_SIZE,
+        label_name='Survived',
+        select_columns=['Sex', 'Pclass', 'Age',
+                        'Fare', 'SibSp', 'Parch', 'Survived']
+    )
+    dataset = dataset.map(_encode_pclass)
+    return dataset
+
+
+def input_fn_eval(csv_file):
+    dataset = tf.data.experimental.make_csv_dataset(
+        csv_file,
+        BATCH_SIZE,
+        label_name='Survived',
+        select_columns=['Sex', 'Pclass', 'Age',
+                        'Fare', 'SibSp', 'Parch', 'Survived'],
+        num_epochs=1
     )
     dataset = dataset.map(_encode_pclass)
     return dataset
@@ -20,14 +39,27 @@ def input_fn_train(csv_file):
 
 def input_fn_test(csv_file):
     dataset = tf.data.experimental.make_csv_dataset(
-        csv_file, BATCH_SIZE,
-        select_columns=['Sex'], num_epochs=NUM_EPOCHS
+        csv_file,
+        BATCH_SIZE,
+        select_columns=['Sex', 'Pclass', 'Age', 'Fare', 'SibSp', 'Parch'],
+        num_epochs=1,
+        shuffle=False
     )
+    dataset = dataset.map(_encode_pclass)
     return dataset
 
 
 def make_hparam_str(learning_rate, hidden_units, dropout):
     return f'lr={learning_rate}, layers={hidden_units}, dropout={dropout}'
+
+
+def write_predictions(predictions, in_file='test.csv', out_file='predict.csv'):
+    df_in = pd.read_csv(in_file)
+    df_out = pd.DataFrame()
+    df_out['PassengerId'] = df_in['PassengerId']
+    survived = [pred['class_ids'][0] for pred in list(prediction)]
+    df_out['Survived'] = pd.Series(survived)
+    df_out.to_csv(out_file, index=False)
 
 
 # tf.enable_eager_execution()
@@ -71,4 +103,7 @@ for learning_rate in [1E-3, 1E-4, 1E-5]:
 
             estimator.train(lambda: input_fn_train('train.csv'),
                             steps=NUM_ITERATIONS)
-            accuracy = estimator.evaluate(lambda: input_fn_train('train.csv'))
+        prediction = estimator.predict(lambda: input_fn_test('test.csv'))
+
+        out_file = f'predict_{hparam_str}.csv'
+        write_predictions(prediction, out_file=out_file)
