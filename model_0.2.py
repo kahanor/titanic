@@ -13,9 +13,7 @@ model_dir = Path(f'{TMP}{i}')
 
 def input_fn():
     dataset = tf.data.experimental.make_csv_dataset(
-        'data/train.csv', BATCH_SIZE, label_name='Survived',
-        select_columns=['Pclass', 'Sex', 'Survived',
-                        'Age', 'Embarked', 'Parch', 'SibSp']
+        'data/train.csv', BATCH_SIZE, label_name='Survived'
     )
     return dataset
 
@@ -24,8 +22,6 @@ def validate_fn():
     dataset = tf.data.experimental.make_csv_dataset(
         'data/train.csv', BATCH_SIZE,
         label_name='Survived',
-        select_columns=['Pclass', 'Sex', 'Survived',
-                        'Age', 'Embarked', 'Parch', 'SibSp'],
         num_epochs=1
     )
     return dataset
