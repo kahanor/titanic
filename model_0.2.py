@@ -1,7 +1,7 @@
 import tensorflow as tf
 from pathlib import Path
 
-NUM_EPOCHS = 1000
+NUM_ITERATIONS = 5000
 BATCH_SIZE = 100
 TMP = 'tmp/model_0.2/'
 
@@ -15,8 +15,7 @@ def input_fn():
     dataset = tf.data.experimental.make_csv_dataset(
         'data/train.csv', BATCH_SIZE, label_name='Survived',
         select_columns=['Pclass', 'Sex', 'Survived',
-                        'Age', 'Embarked', 'Parch', 'SibSp'],
-        num_epochs=NUM_EPOCHS
+                        'Age', 'Embarked', 'Parch', 'SibSp']
     )
     return dataset
 
@@ -84,5 +83,5 @@ estimator = tf.estimator.DNNClassifier(
     config=config
 )
 
-estimator.train(input_fn=input_fn)
+estimator.train(input_fn=input_fn, max_steps=NUM_ITERATIONS)
 estimator.evaluate(input_fn=validate_fn, steps=1)
