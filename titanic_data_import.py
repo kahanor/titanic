@@ -82,7 +82,11 @@ age = tf.feature_column.numeric_column('Age')
 
 fare = tf.feature_column.numeric_column('Fare')
 
-feature_columns = [sex, pclass, age, fare]
+sib_sb = tf.feature_column.numeric_column('SibSp')
+
+par_ch = tf.feature_column.numeric_column('Parch')
+
+feature_columns = [sex, pclass, age, fare, sib_sb, par_ch]
 
 
 for learning_rate in [1E-3, 1E-4, 1E-5]:
