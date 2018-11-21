@@ -1,7 +1,7 @@
 import tensorflow as tf
 import pandas as pd
 
-NUM_ITERATIONS = 15001
+NUM_ITERATIONS = 10001
 BATCH_SIZE = 100
 
 
