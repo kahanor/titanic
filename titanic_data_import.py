@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-NUM_EPOCHS = 5000
+NUM_ITERATIONS = 15001
 BATCH_SIZE = 100
 
 
@@ -12,8 +12,7 @@ def _encode_pclass(features, labels):
 def input_fn_train(csv_file):
     dataset = tf.data.experimental.make_csv_dataset(
         csv_file, BATCH_SIZE, label_name='Survived',
-        select_columns=['Sex', 'Pclass', 'Age', 'Survived'],
-        num_epochs=NUM_EPOCHS
+        select_columns=['Sex', 'Pclass', 'Age', 'Survived']
     )
     dataset = dataset.map(_encode_pclass)
     return dataset
@@ -58,7 +57,7 @@ for learning_rate in [1E-3, 1E-4, 1E-5]:
     for hidden_units in [[], [5], [10], [5, 5], [10, 5]]:
         for dropout in [None, 0.2]:
             hparam_str = make_hparam_str(learning_rate, hidden_units, dropout)
-            model_dir = f'/tmp/titanic/20/{hparam_str}'
+            model_dir = f'/tmp/titanic/24/{hparam_str}'
 
             optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)
 
@@ -67,5 +66,7 @@ for learning_rate in [1E-3, 1E-4, 1E-5]:
                                                    model_dir=model_dir,
                                                    optimizer=optimizer,
                                                    dropout=dropout)
-            estimator.train(lambda: input_fn_train('train.csv'))
+
+            estimator.train(lambda: input_fn_train('train.csv'),
+                            steps=NUM_ITERATIONS)
             accuracy = estimator.evaluate(lambda: input_fn_train('train.csv'))
