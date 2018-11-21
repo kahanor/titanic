@@ -7,14 +7,21 @@ import numpy as np
 # used features: Pclass, Sex, Age,
 # transform data into float32 values
 def get_data_set(a_file):
-    data_set = []
     data_frame = pd.read_csv(a_file)
-    print(data_frame.iloc[0:10])
-    data_set.append(data_frame.loc[:, "Survived"])
-    data_set.append(data_frame.loc[:, "Pclass"])
-    data_set.append(data_frame.loc[:, "Age"])
-    data_set.append(data_frame.loc[:, "Sex"])
-    data_set.reshape(-1, 4, 1)
+    data_set_shape = (data_frame.shape[0], 4)
+    data_set = np.empty(data_set_shape)
+    data_set[:, 0] = data_frame.loc[:, "Survived"]
+    data_set[:, 1] = data_frame.loc[:, "Pclass"]
+    data_set[:, 2] = data_frame.loc[:, "Age"]
+    column_sex = np.empty(data_set_shape[0])
+    data_frame_sex = data_frame.loc[:, "Sex"]
+    for c in range(data_set_shape[0]-1):
+        if data_frame_sex[c] == "male":
+            column_sex[c] = 1
+        else:
+            column_sex[c] = 0
+
+    data_set[:, 3] = column_sex
     return data_set
 
 
@@ -25,6 +32,7 @@ def get_next_batch(a_data_set):
 data_set = get_data_set("../data/train.csv")
 print(data_set[0:10])
 print(data_set.dtype)
+print(data_set.shape)
 exit(0)
 
 # build model
@@ -44,7 +52,7 @@ train_step = optimizer.minimize(cross_entropy)
 
 # calc accuracy and loss function
 is_correct = tf.equal(Y_, tf.round(Y))
-loss = tf.reduce_mean(tf.cast(is_correct, tf.float32))
+accuracy = tf.reduce_mean(tf.cast(is_correct, tf.float32))
 
 # initialize session
 init = tf.initialize_all_variables()
