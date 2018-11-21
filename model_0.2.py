@@ -6,9 +6,9 @@ BATCH_SIZE = 100
 TMP = 'tmp/model_0.2/'
 
 i = 0
-while Path(f'{TMP}/{i}').exists():
+while Path(f'{TMP}{i}').exists():
     i += 1
-model_dir = Path(f'{TMP}/{i}')
+model_dir = Path(f'{TMP}{i}')
 
 
 def input_fn():
