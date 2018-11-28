@@ -2,7 +2,7 @@ import pandas as pd
 import tensorflow as tf
 
 
-def train_split(
+def split_train_data(
         train_in='data/train.csv',
         split=0.7,
         train_out='data/train_train.csv',
