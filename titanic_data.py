@@ -1,12 +1,16 @@
 import pandas as pd
 import tensorflow as tf
+from os.path import splitext
+
+
+def _append_to_file_name(file_name, append_str):
+    file_name = splitex(file_name)
+    return f'{file_name[0]}{append_str}{file_name[1]}'
 
 
 def split_train_data(
         train_in='data/train.csv',
-        split=0.7,
-        train_out='data/train_train.csv',
-        valid_out='data/train_valid.csv'
+        split=0.7
 ):
     train_df = pd.read_csv(train_in)
     train_df = train_df.sample(frac=1)
@@ -15,6 +19,8 @@ def split_train_data(
     train = train_df.iloc[:train_rows]
     valid = train_df.iloc[train_rows:]
 
+    train_out = _append_to_file_name(train_in, '_train')
+    valid_out = _append_to_file_name(train_in, '_valid')
     train.to_csv(train_out)
     valid.to_csv(valid_out)
 
