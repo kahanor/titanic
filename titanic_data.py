@@ -17,3 +17,16 @@ def train_split(
 
     train.to_csv(train_out)
     valid.to_csv(valid_out)
+
+
+def write_predictions(
+        prediction,
+        in_file='data/test.csv',
+        out_file='data/predict.csv'
+):
+    df_in = pd.read_csv(in_file)
+    df_out = pd.DataFrame()
+    df_out['PassengerId'] = df_in['PassengerId']
+    survived = [pred['class_ids'][0] for pred in list(prediction)]
+    df_out['Survived'] = pd.Series(survived)
+    df_out.to_csv(out_file, index=False)
