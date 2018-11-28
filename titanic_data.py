@@ -1,50 +1,19 @@
+import pandas as pd
 import tensorflow as tf
 
 
-class TitanicData(object):
+def train_split(
+        train_in='data/train.csv',
+        split=0.7,
+        train_out='data/train_train.csv',
+        valid_out='data/train_valid.csv'
+):
+    train_df = pd.read_csv(train_in)
+    train_df = train_df.sample(frac=1)
 
-    def __init__(self):
-        pass
+    train_rows = int(len(train_df) * split)
+    train = train_df.iloc[:train_rows]
+    valid = train_df.iloc[train_rows:]
 
-    def _encode_pclass(self, features, labels=None):
-        features['Pclass'] = features['Pclass'] - 1
-        if labels is None:
-            return features
-        return features, labels
-
-    def load_train_data(
-            self,
-            train_file,
-            batch_size,
-            train_split
-    ):
-        dataset = tf.data.experimental.make_csv_dataset(
-            train_file,
-            batch_size=1,
-            num_epochs=1,
-            label_name='Survived',
-        )
-
-        dataset = dataset.map(self._encode_pclass)
-
-        line_count = num_lines = sum(1 for line in open(train_file)) - 1
-        train_lines = int(line_count * train_split)
-
-        train_dataset = dataset.take(train_lines)
-        valid_dataset = dataset.skip(train_lines)
-
-        train_dataset = train_dataset.apply(
-            tf.data.experimental.shuffle_and_repeat(10000)
-        )
-        train_dataset = train_dataset.batch(batch_size, drop_remainder=True)
-
-        valid_dataset = valid_dataset.batch(batch_size)
-
-        self._train_dataset = train_dataset
-        self._valid_dataset = valid_dataset
-
-    def train_input_fn(self):
-        return self._train_dataset
-
-    def valid_input_fn(self):
-        return self._valid_dataset
+    train.to_csv(train_out)
+    valid.to_csv(valid_out)
