@@ -35,6 +35,8 @@ par_ch = tf.feature_column.numeric_column('Parch')
 
 feature_columns = [sex, pclass, age, fare, sib_sb, par_ch]
 
+train_csv, valid_csv = t_data.split_train_data()
+
 
 for learning_rate in [1E-3, 1E-4, 1E-5]:
     for hidden_units in [[], [5], [10], [5, 5], [10, 5]]:
@@ -54,12 +56,12 @@ for learning_rate in [1E-3, 1E-4, 1E-5]:
             optimizer=optimizer,
             dropout=dropout
         )
-        estimator.train(lambda: t_data.input_fn_train('train.csv'),
+        estimator.train(lambda: t_data.input_fn_train(train_csv),
                         steps=NUM_ITERATIONS)
         accuracy = estimator.evaluate(
-            lambda: t_data.input_fn_eval('train.csv'))
+            lambda: t_data.input_fn_eval(valid_csv))
         prediction = estimator.predict(
-            lambda: t_data.input_fn_test('test.csv'))
+            lambda: t_data.input_fn_test('data/test.csv'))
 
         out_file = f'predict_{hparam_str}.csv'
         t_data.write_predictions(prediction, out_file=out_file)
