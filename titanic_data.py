@@ -24,6 +24,8 @@ def split_train_data(
     train.to_csv(train_out)
     valid.to_csv(valid_out)
 
+    return train_out, valid_out
+
 
 def _encode_pclass(features, labels=None):
     features['Pclass'] = features['Pclass'] - 1
