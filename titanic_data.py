@@ -25,6 +25,44 @@ def split_train_data(
     valid.to_csv(valid_out)
 
 
+def _encode_pclass(features, labels=None):
+    features['Pclass'] = features['Pclass'] - 1
+    if labels is None:
+        return features
+    return features, labels
+
+
+def input_fn_train(csv_file, batch_size):
+    dataset = tf.data.experimental.make_csv_dataset(
+        csv_file,
+        batch_size,
+        label_name='Survived'
+    )
+    dataset = dataset.map(_encode_pclass)
+    return dataset
+
+
+def input_fn_eval(csv_file, batch_size):
+    dataset = tf.data.experimental.make_csv_dataset(
+        csv_file,
+        batch_size,
+        label_name='Survived',
+        num_epochs=1
+    )
+    dataset = dataset.map(_encode_pclass)
+    return dataset
+
+
+def input_fn_predict(csv_file, batch_size):
+    dataset = tf.data.experimental.make_csv_dataset(
+        csv_file,
+        batch_size,
+        num_epochs=1
+    )
+    dataset = dataset.map(_encode_pclass)
+    return dataset
+
+
 def write_predictions(
         prediction,
         in_file='data/test.csv',
