@@ -1,53 +1,8 @@
 import tensorflow as tf
 import pandas as pd
-from output_titanic import write_predictions
+import titanic_data as t_data
 
 NUM_ITERATIONS = 10001
-BATCH_SIZE = 100
-
-
-def _encode_pclass(features, labels=None):
-    features['Pclass'] = features['Pclass'] - 1
-    if labels is None:
-        return features
-    return features, labels
-
-
-def input_fn_train(csv_file):
-    dataset = tf.data.experimental.make_csv_dataset(
-        csv_file,
-        BATCH_SIZE,
-        label_name='Survived',
-        select_columns=['Sex', 'Pclass', 'Age',
-                        'Fare', 'SibSp', 'Parch', 'Survived']
-    )
-    dataset = dataset.map(_encode_pclass)
-    return dataset
-
-
-def input_fn_eval(csv_file):
-    dataset = tf.data.experimental.make_csv_dataset(
-        csv_file,
-        BATCH_SIZE,
-        label_name='Survived',
-        select_columns=['Sex', 'Pclass', 'Age',
-                        'Fare', 'SibSp', 'Parch', 'Survived'],
-        num_epochs=1
-    )
-    dataset = dataset.map(_encode_pclass)
-    return dataset
-
-
-def input_fn_test(csv_file):
-    dataset = tf.data.experimental.make_csv_dataset(
-        csv_file,
-        BATCH_SIZE,
-        select_columns=['Sex', 'Pclass', 'Age', 'Fare', 'SibSp', 'Parch'],
-        num_epochs=1,
-        shuffle=False
-    )
-    dataset = dataset.map(_encode_pclass)
-    return dataset
 
 
 def make_hparam_str(learning_rate, hidden_units, dropout):
@@ -99,11 +54,12 @@ for learning_rate in [1E-3, 1E-4, 1E-5]:
             optimizer=optimizer,
             dropout=dropout
         )
-
-        estimator.train(lambda: input_fn_train('train.csv'),
+        estimator.train(lambda: t_data.input_fn_train('train.csv'),
                         steps=NUM_ITERATIONS)
-        accuracy = estimator.evaluate(lambda: input_fn_eval('train.csv'))
-        prediction = estimator.predict(lambda: input_fn_test('test.csv'))
+        accuracy = estimator.evaluate(
+            lambda: t_data.input_fn_eval('train.csv'))
+        prediction = estimator.predict(
+            lambda: t_data.input_fn_test('test.csv'))
 
         out_file = f'predict_{hparam_str}.csv'
-        write_predictions(prediction, out_file=out_file)
+        t_data.write_predictions(prediction, out_file=out_file)
