@@ -32,7 +32,7 @@ def _encode_pclass(features, labels=None):
     return features, labels
 
 
-def input_fn_train(csv_file, batch_size):
+def input_fn_train(csv_file, batch_size=128):
     dataset = tf.data.experimental.make_csv_dataset(
         csv_file,
         batch_size,
@@ -42,7 +42,7 @@ def input_fn_train(csv_file, batch_size):
     return dataset
 
 
-def input_fn_eval(csv_file, batch_size):
+def input_fn_eval(csv_file, batch_size=128):
     dataset = tf.data.experimental.make_csv_dataset(
         csv_file,
         batch_size,
@@ -53,7 +53,7 @@ def input_fn_eval(csv_file, batch_size):
     return dataset
 
 
-def input_fn_predict(csv_file, batch_size):
+def input_fn_predict(csv_file, batch_size=128):
     dataset = tf.data.experimental.make_csv_dataset(
         csv_file,
         batch_size,
